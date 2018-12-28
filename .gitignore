@@ -1,0 +1,9 @@
+# IDEA Files
+.idea/
+
+# Gradle build files
+build/
+.gradle/
+
+# Demo intellij sandbox project
+test_project/
