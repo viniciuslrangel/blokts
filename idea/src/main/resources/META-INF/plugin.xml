@@ -1,0 +1,22 @@
+<idea-plugin>
+  <id>io.github.viniciuslrangel.blokts</id>
+  <name>Blokts</name>
+  <version>0.1</version>
+  <vendor email="vinicius.l.rangel@gmail.com">viniciuslrangel</vendor>
+
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.kotlin</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="io.github.viniciuslrangel.blokts.idea.filetype.BloktsFileTypeFactory" />
+    <fileEditorProvider implementation="io.github.viniciuslrangel.blokts.idea.editor.BloktsFileEditorProvider" />
+  </extensions>
+
+  <actions>
+    <action id="blokts.generateBloktsFile" class="io.github.viniciuslrangel.blokts.idea.action.GenerateBloktsFile"
+            text="Generate Blokts File">
+      <add-to-group group-id="JavaCompileGroup" anchor="last"/>
+    </action>
+  </actions>
+</idea-plugin>
