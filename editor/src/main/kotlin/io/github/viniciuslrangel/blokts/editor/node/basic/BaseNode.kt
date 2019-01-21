@@ -31,6 +31,8 @@ abstract class BaseNode : Node {
 
     open val background: Paint = Color.LIGHTGRAY
 
+    override lateinit var rebuild: () -> Unit
+
     override fun render(context: GraphicsContext, size: Point) {
 
         context.fill = background
@@ -44,4 +46,5 @@ abstract class BaseNode : Node {
         context.fillText(title, 8.0, font.size + 6.0)
 
     }
+
 }

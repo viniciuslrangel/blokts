@@ -16,7 +16,6 @@ import javafx.scene.control.Accordion
 import javafx.scene.control.Label
 import javafx.scene.control.TitledPane
 import javafx.scene.input.MouseButton
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
@@ -37,16 +36,20 @@ sealed class BaseNodeState {
 
     abstract val constraint: BoxConstraint
 
-    val size by lazy {
-        constraint(
-            node.prefWidth,
-            Math.max(
-                node.prefHeight,
-                (node.pins.groupBy { it.side }.map { j -> j.value.sumByDouble { k -> k.size.y } }.max()
-                    ?: 0.0) + node.topPadding + 14.0
-            )
-        )
-    }
+    protected var _size: Point? = null
+    val size: Point
+        get () {
+            if (_size == null)
+                _size = constraint(
+                    node.prefWidth,
+                    Math.max(
+                        node.prefHeight,
+                        (node.pins.groupBy { it.side }.map { j -> j.value.sumByDouble { k -> k.size.y } }.max()
+                            ?: 0.0) + node.topPadding + 14.0
+                    )
+                )
+            return _size!!
+        }
 
     abstract val pinNodes: Map<Pin<*, *>, javafx.scene.Node>
 
@@ -73,6 +76,16 @@ data class NodeState(
     private val pinPanel = mutableMapOf<PinSide, VBox>()
     override val pinNodes = mutableMapOf<Pin<*, *>, Canvas>()
 
+
+    init {
+        node.rebuild = {
+            _size = null
+            build()
+            canvas?.resize(size.x, size.y)
+            render()
+        }
+    }
+
     override fun render() {
         canvas?.render()
         pinNodes.forEach { pin, canvas ->
@@ -88,9 +101,16 @@ data class NodeState(
     }
 
     override fun build(): javafx.scene.Node {
-        val anchor = AnchorPane()
-        root = anchor
-        JavaFXUtils.Drag.makeDraggable(anchor, this)
+        val anchor: AnchorPane
+        if (root == null) {
+            anchor = AnchorPane()
+            root = anchor
+            JavaFXUtils.Drag.makeDraggable(anchor, this)
+        } else {
+            anchor = root!!
+            anchor.children.clear()
+        }
+
 
         val canvas = Canvas(size.x, size.y)
         this.canvas = canvas
@@ -116,6 +136,7 @@ data class NodeState(
             vBox.children += data.values
             pinNodes.putAll(data)
         }
+        node.build(anchor)
 
         return anchor
     }
@@ -177,6 +198,13 @@ data class NodeContainerState(
     var selectedPin: Pair<Pin<*, *>, Canvas>? = null
 
     private var lastMousePos = Point.ZERO
+
+    init {
+        node.rebuild = {
+            build()
+            render()
+        }
+    }
 
     private fun GraphicsContext.drawBezier(startX: Double, startY: Double, endX: Double, endY: Double) {
         val x = endX - startX
@@ -324,7 +352,7 @@ data class NodeContainerState(
                     return@setOnMouseClicked
                 }
                 val value = selectedPin
-                if(value != null) {
+                if (value != null) {
                     selectedPin = null
                     value.first.render(value.second.graphicsContext2D)
                     fgRender()
