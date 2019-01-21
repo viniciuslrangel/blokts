@@ -27,7 +27,7 @@ private const val KAPT_KOTLIN_GENERATED = "kapt.kotlin.generated"
 class ActionProcessor : AbstractProcessor() {
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
-        if (annotations.any {
+        if (annotations.isEmpty() || annotations.any {
                 !processingEnv.typeUtils.isSameType(
                     it.asType(),
                     processingEnv.elementUtils.getTypeElement(BloktsAction::class.java.canonicalName).asType()
