@@ -12,8 +12,8 @@ interface Node {
 
     val pins: Array<Pin<*, *>>
 
-    var prefWidth: Double
-    var prefHeight: Double
+    val prefWidth: Double
+    val prefHeight: Double
 
     val draggable: Boolean
 

@@ -15,8 +15,8 @@ abstract class BaseNode : Node {
 
     override val pins: Array<Pin<*, *>> = emptyArray()
 
-    override var prefWidth = 130.0
-    override var prefHeight = 70.0
+    override val prefWidth = 130.0
+    override val prefHeight = 70.0
 
     override val draggable = true
 
