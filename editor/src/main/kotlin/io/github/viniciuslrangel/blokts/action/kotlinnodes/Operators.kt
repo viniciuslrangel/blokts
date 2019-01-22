@@ -14,7 +14,7 @@ import javafx.scene.text.Font
 /**
  * Created by <viniciuslrangel> on 25 Dec 2018, 9:01 PM (UTC-3).
  */
-@BloktsAction
+@BloktsAction(category = "Math")
 class Add : BaseNode() {
 
     override val title = "Add"
